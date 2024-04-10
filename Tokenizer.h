@@ -7,7 +7,7 @@
 #include <vector>
 
 enum class Keywords {
-    help, about, version, create, drop, database // ...
+    help, about, version, create, drop, database, table, row, insert // ...
 };
 
 class Tokenizer {

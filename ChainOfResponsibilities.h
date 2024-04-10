@@ -6,28 +6,29 @@
 
 #include "Tokenizer.h"
 #include <vector>
+#include <memory>
 
 class Handler {
 public:
-    virtual ~Handler() {}
+    virtual ~Handler() = default;
 
-    bool handle(Tokenizer& tokenizer) {
+    bool find(Tokenizer& tokenizer) {
         if (canHandle(tokenizer))
-            return execute();
+            return handle();
 
         if (!next)
             return false;
 
-        return next->handle(tokenizer);
+        return next->find(tokenizer);
     }
 
-    void setNext(Handler* handler) { next = handler; }
+    void setNext(const std::shared_ptr<Handler>& handler) { next = handler; }
 
     virtual bool canHandle(Tokenizer&) = 0;
-    virtual bool execute(/* params... */) = 0;
+    virtual bool handle(/* params */) = 0;
 
 private:
-    Handler* next = nullptr;
+    std::shared_ptr<Handler> next;
 
 };
 
@@ -46,23 +47,26 @@ public:
 
     template<class HandlerType>
     void registerHandler() {
-
-        auto* newHandler = new HandlerType;
-        if (!handlerList.empty())
-            handlerList.back()->setNext(newHandler);
-
-        handlerList.emplace_back(newHandler);
+        auto newHandler = std::shared_ptr<Handler>(new HandlerType);
+        if (!firstHandler) {
+            firstHandler = newHandler;
+            lastHandler = newHandler;
+        }
+        else {
+            lastHandler->setNext(newHandler);
+            lastHandler = newHandler;
+        }
     }
 
     bool handle(Tokenizer& tokenizer) {
-        if (handlerList.empty())
+        if (!firstHandler)
             return false;
 
-        return handlerList[0]->handle(tokenizer);
+        return firstHandler->find(tokenizer);
     }
 
 private:
-    std::vector<std::unique_ptr<Handler>> handlerList;
+    std::shared_ptr<Handler> firstHandler, lastHandler;
 
 };
 

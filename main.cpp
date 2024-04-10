@@ -4,13 +4,16 @@
 
 int main() {
     Tokenizer tokenizer;
-    //tokenizer.keywordList = { Keywords::create, Keywords::database };
-    tokenizer.keywordList = { Keywords::help };
+    tokenizer.keywordList = { Keywords::create, Keywords::database };
+    //tokenizer.keywordList = { Keywords::help };
 
-    auto& CORInstance = ChainOfResponsibilities::getInstance();
+    // OLD WAY
+    //auto& CORInstance = ChainOfResponsibilities::getInstance();
     //CORInstance.registerHandler<BasicCommandHandler>();
     //CORInstance.registerHandler<DatabaseCommandHandler>();
-    CORInstance.handle(tokenizer);
+
+    // NEW WAY
+    ChainOfResponsibilities::getInstance().handle(tokenizer);
 
     return 0;
 }

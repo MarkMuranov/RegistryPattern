@@ -16,7 +16,7 @@ public:
             || tokenizer.current() == Keywords::about;
     }
 
-    bool execute(/* params... */) override {
+    bool handle() override {
         std::cout << "Basic command!\n";
         return true;
     }
@@ -30,7 +30,7 @@ public:
         return tokenizer.peekEquals(Keywords::database);
     }
 
-    bool execute(/* params... */) override {
+    bool handle() override {
         std::cout << "Database command!\n";
         return true;
     }
