@@ -9,7 +9,6 @@
 
 class BasicCommandHandler : public Handler {
 public:
-
     bool canHandle(Tokenizer& tokenizer) override {
         return tokenizer.current() == Keywords::help
             || tokenizer.current() == Keywords::version
@@ -25,7 +24,6 @@ public:
 
 class DatabaseCommandHandler : public Handler {
 public:
-
     bool canHandle(Tokenizer& tokenizer) override {
         return tokenizer.peekEquals(Keywords::database);
     }
@@ -37,5 +35,5 @@ public:
 
 };
 
-inline const RegisterHandler<BasicCommandHandler> registerBasicHandler;
-inline const RegisterHandler<DatabaseCommandHandler> registerDatabaseHandler;
+//inline const RegisterHandler<BasicCommandHandler> registerBasicHandler;
+//inline const RegisterHandler<DatabaseCommandHandler> registerDatabaseHandler;
