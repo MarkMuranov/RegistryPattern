@@ -19,9 +19,11 @@ databaseHandler->setNext(tableHandler);
 basicHandler->find(tokenizer);
 ```
 
-This is tedious (as for each Handler you add, you have to come back here
-and modify the COR set up code) and it is error-prone (as it is very easy
-incorrectly connect the handlers by using `setNext()` incorrectly).
+This is bad for two reasons:
+1. **Tedious:** For each Handler you add, you have to come back here and 
+modify the COR set up code
+2. **Error-prone:** It is easy to incorrectly connect the handlers by 
+calling `setNext()` incorrectly.
 
 ## Simplifying using Singletons
 
@@ -76,7 +78,8 @@ private:
 
 The `registerHandler()` method is a template method. In order to use this
 method, you must pass in the specific Handler class you want to add
-to the chain, for instance:
+to the chain. This method will create a new `shared_ptr` instance of the 
+specific `HandlerType`. Here is an example:
 
 ```cpp
 using COR = ChainOfResponsibilities;
@@ -90,7 +93,7 @@ Handler.
 
 This is already a huge improvement for two reasons:
 1. This eliminates the potential for mistakes when connecting the Handlers
-in the chain.
+in the chain using `setNext()`.
 2. We can add new Handlers to the COR from anywhere in our code, as long
 as we can access the `ChainOfResponsibilities` singleton.
 
@@ -107,13 +110,13 @@ CORInstance.registerHandler<TableCommandHandler>();
 CORInstance.handle(tokenizer);
 ```
 
-Already this makes our code easier to follow, since all the connection
-(calling `setNext()`) logic is done for us by this singleton. However,
+Already this makes our code easier to follow, since all the connection logic
+(calling `setNext()`) is done for us by this singleton. However,
 we can do better >:D
 
 ## Registry Pattern
 
-Finally, we get to the Registry Pattern. Ideally, we would be able to
+Finally, we get to the **Registry Pattern**. Ideally, we would be able to
 write code that gets run at the start of the program's runtime from within
 any file (without having to explicitly call that code from the start of
 the program). However, unlike Python, we cannot just write code in the
@@ -142,10 +145,9 @@ struct RegisterHandler {
 ```
 
 Just like the `registerHandler()` method, this class utilizes templates.
-In this case, the template will just forward the `HandlerType` to the 
-method.
+In this case, the template argument is just forwarded to the method.
 
-In the file where we actually declare the various Handler types (like
+In the file where we actually declare the various Handler classes (like
 `BasicCommandHandler`, `DatabaseCommandHandler`, ...), we can declare
 a global instance of the `RegisterHandler` class at the bottom of these
 files, like so:
@@ -156,7 +158,7 @@ inline const RegisterHandler<DatabaseCommandHandler> registerDatabaseHandler;
 inline const RegisterHandler<TableCommandHandler> registerTableHandler;
 ```
 
-> The `inline` keyword is used to ensure that these object are only
+> Note: The `inline` keyword is used to ensure that these object are only
 > created once.
 
 Then, from where we actually want to use the COR, all we have to do is:
@@ -166,7 +168,7 @@ ChainOfResponsibilities::getInstance().handle(tokenizer);
 ```
 
 With this design, we can add new Handlers from anywhere in our code, from
-any file! If you had some centralized controller which was setting up the
+any file! If you have some centralized controller which was setting up the
 COR, you can now delete that code! In fact, anytime you add a new Handler
 these controllers do not have to be modified/updated at all!
 
