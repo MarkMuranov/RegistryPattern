@@ -35,5 +35,5 @@ public:
 
 };
 
-//inline const RegisterHandler<BasicCommandHandler> registerBasicHandler;
-//inline const RegisterHandler<DatabaseCommandHandler> registerDatabaseHandler;
+inline const RegisterHandler<BasicCommandHandler> registerBasicHandler;
+inline const RegisterHandler<DatabaseCommandHandler> registerDatabaseHandler;

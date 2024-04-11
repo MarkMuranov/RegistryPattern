@@ -7,20 +7,7 @@ int main() {
     tokenizer.keywordList = { Keywords::create, Keywords::database };
     //tokenizer.keywordList = { Keywords::help };
 
-    // --OLD WAY--
-    auto basicCommand = std::make_shared<BasicCommandHandler>();
-    auto databaseCommand = std::make_shared<DatabaseCommandHandler>();
-    basicCommand->setNext(databaseCommand);
-    basicCommand->find(tokenizer);
-
-    // --BETTER WAY--
-    //auto& CORInstance = ChainOfResponsibilities::getInstance();
-    //CORInstance.registerHandler<BasicCommandHandler>();
-    //CORInstance.registerHandler<DatabaseCommandHandler>();
-    //CORInstance.handle(tokenizer);
-
-    // --NEW WAY--
-    //ChainOfResponsibilities::getInstance().handle(tokenizer);
+    ChainOfResponsibilities::getInstance().handle(tokenizer);
 
     return 0;
 }
